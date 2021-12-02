@@ -14,27 +14,37 @@ function App() {
   const [emails, setEmails] = useState(initialEmails)
   const [hideRead, setHideRead] = useState(false)
   const [currentTab, setCurrentTab] = useState('inbox')
+  const [searchTerm, setSearchterm] = useState("");
+  console.log(searchTerm);
 
   const unreadEmails = emails.filter(email => !email.read)
   const starredEmails = emails.filter(email => email.starred)
 
-  const handleSearch = (e) => {
-    let search = e.target.value;
-    let searchLength = e.target.value.length;
-    let inSearchEmails = [];
-    console.log(search)
-    emails.map(email => {
-      for (let i = 0; i < email.title.length; i++) {
-        if (search === (email.title).toLowerCase().slice(i, searchLength) && searchLength > 0) {
-          email.inSearch = 1;
-          console.log(email);
-          inSearchEmails.push(email);
-        } if (searchLength == 0) {
-          inSearchEmails = initialEmails;
-        }
-      }
+  // const handleSearch = (e) => {
+  //   let searchEmails = emails;
+  //   let search = e.target.value;
+  //   let searchLength = e.target.value.length;
+  //   let inSearchEmails = [];
+  //   console.log(search)
+  //   searchEmails.map(email => {
+  //     for (let i = 0; i < email.title.length; i++) {
+  //       if (search === (email.title).toLowerCase().slice(i, searchLength) && searchLength > 0) {
+  //         email.inSearch = 1;
+  //         console.log(email);
+  //         inSearchEmails.push(email);
+  //       } if (searchLength === 0) {
+  //         inSearchEmails = initialEmails;
+  //       }
+  //     }
+  //   })
+  //   setEmails(inSearchEmails);
+  // }
+
+  const handleSearch = e => {
+    const searchString = e.target.value;
+    emails.filter(email => {
+      return email.title.contain()
     })
-    setEmails(inSearchEmails);
   }
 
   
@@ -61,7 +71,7 @@ function App() {
         </div>
 
         <div className="search">
-          <input className="search-bar" placeholder="Search mail" onChange={handleSearch}/>
+          <input className="search-bar" placeholder="Search mail" onChange={e => setSearchterm(e.target.value)}/>
         </div>
       </header>
       <nav className="left-menu">
@@ -93,7 +103,7 @@ function App() {
         </ul>
       </nav>
       <main className="emails">
-      <RenderEmails filteredEmails={filteredEmails} setEmails={setEmails} />
+      <RenderEmails filteredEmails={filteredEmails} setEmails={setEmails} searchTerm={searchTerm}/>
       </main>
     </div>
   )
