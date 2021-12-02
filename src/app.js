@@ -4,6 +4,8 @@ import initialEmails from './data/emails'
 
 import './styles/app.css'
 
+import RenderEmails from './emails'
+
 const getReadEmails = emails => emails.filter(email => !email.read)
 
 const getStarredEmails = emails => emails.filter(email => email.starred)
@@ -16,23 +18,26 @@ function App() {
   const unreadEmails = emails.filter(email => !email.read)
   const starredEmails = emails.filter(email => email.starred)
 
-  const toggleStar = targetEmail => {
-    const updatedEmails = emails =>
-      emails.map(email =>
-        email.id === targetEmail.id
-          ? { ...email, starred: !email.starred }
-          : email
-      )
-    setEmails(updatedEmails)
+  const handleSearch = (e) => {
+    let search = e.target.value;
+    let searchLength = e.target.value.length;
+    let inSearchEmails = [];
+    console.log(search)
+    emails.map(email => {
+      for (let i = 0; i < email.title.length; i++) {
+        if (search === (email.title).toLowerCase().slice(i, searchLength) && searchLength > 0) {
+          email.inSearch = 1;
+          console.log(email);
+          inSearchEmails.push(email);
+        } if (searchLength == 0) {
+          inSearchEmails = initialEmails;
+        }
+      }
+    })
+    setEmails(inSearchEmails);
   }
 
-  const toggleRead = targetEmail => {
-    const updatedEmails = emails =>
-      emails.map(email =>
-        email.id === targetEmail.id ? { ...email, read: !email.read } : email
-      )
-    setEmails(updatedEmails)
-  }
+  
 
   let filteredEmails = emails
 
@@ -56,7 +61,7 @@ function App() {
         </div>
 
         <div className="search">
-          <input className="search-bar" placeholder="Search mail" />
+          <input className="search-bar" placeholder="Search mail" onChange={handleSearch}/>
         </div>
       </header>
       <nav className="left-menu">
@@ -88,33 +93,7 @@ function App() {
         </ul>
       </nav>
       <main className="emails">
-        <ul>
-          {filteredEmails.map((email, index) => (
-            <li
-              key={index}
-              className={`email ${email.read ? 'read' : 'unread'}`}
-            >
-              <div className="select">
-                <input
-                  className="select-checkbox"
-                  type="checkbox"
-                  checked={email.read}
-                  onChange={() => toggleRead(email)}
-                />
-              </div>
-              <div className="star">
-                <input
-                  className="star-checkbox"
-                  type="checkbox"
-                  checked={email.starred}
-                  onChange={() => toggleStar(email)}
-                />
-              </div>
-              <div className="sender">{email.sender}</div>
-              <div className="title">{email.title}</div>
-            </li>
-          ))}
-        </ul>
+      <RenderEmails filteredEmails={filteredEmails} setEmails={setEmails} />
       </main>
     </div>
   )
